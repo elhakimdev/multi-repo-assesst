@@ -1,0 +1,27 @@
+{
+  "name": "@fullstack-assessment-tripatra/kafka-nest-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "kafka-nest-e2e",
+    "projectType": "application",
+    "implicitDependencies": [
+      "kafka-nest"
+    ],
+    "targets": {
+      "e2e": {
+        "executor": "@nx/jest:jest",
+        "outputs": [
+          "{workspaceRoot}/coverage/{e2eProjectRoot}"
+        ],
+        "options": {
+          "jestConfig": "apps/nest-kafka-e2e/jest.config.ts",
+          "passWithNoTests": true
+        },
+        "dependsOn": [
+          "kafka-nest:build"
+        ]
+      }
+    }
+  }
+}
