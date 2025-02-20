@@ -8,6 +8,12 @@
     },
     {
       "path": "./apps/nest-kafka"
+    },
+    {
+      "path": "./apps/indonesian-citizen-map-e2e"
+    },
+    {
+      "path": "./apps/indonesian-citizen-map"
     }
   ]
 }

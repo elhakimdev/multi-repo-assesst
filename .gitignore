@@ -41,3 +41,8 @@ Thumbs.db
 .nx/cache
 .nx/workspace-data
 logs/
+
+# Next.js
+.next
+out
+test-output

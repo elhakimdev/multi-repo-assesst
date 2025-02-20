@@ -1,0 +1,15 @@
+{
+  "name": "@fullstack-assessment-tripatra/indonesian-citizen-map",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "indonesian-citizen-map",
+    "projectType": "application",
+    "sourceRoot": "apps/indonesian-citizen-map"
+  },
+  "dependencies": {
+    "next": "~15.1.4",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  }
+}
