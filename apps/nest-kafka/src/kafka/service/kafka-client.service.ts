@@ -1,14 +1,16 @@
-import {Consumer, ConsumerConfig, Kafka, Producer, ProducerConfig, logLevel} from 'kafkajs';
+import {Consumer, ConsumerConfig, Kafka, Producer, ProducerConfig} from 'kafkajs';
 
 import { Injectable } from "@nestjs/common";
+import kafkaConfiguration from '../../config/kafka-configuration';
 
 @Injectable()
 export class KafkaClientService {
 
+  private readonly kafkaConfig = kafkaConfiguration()
+
   private readonly kafka: Kafka = new Kafka({
-    brokers: ['0.0.0.0:29092'],
-    clientId: 'kafka-client-nest',
-    logLevel: logLevel.DEBUG,
+    brokers: [this.kafkaConfig.broker],
+    clientId: this.kafkaConfig.clientId,
   });
 
   getProducer(config?: ProducerConfig): Producer {

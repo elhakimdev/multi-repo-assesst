@@ -41,6 +41,24 @@
             "buildTarget": "kafka-nest:build:production"
           }
         }
+      },
+      "kafka-consumer:dev": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "pnpm ts-node apps/nest-kafka/src/main.ts kafka:consume"
+        }
+      },
+      "kafka-producer:dev:interactive": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "pnpm ts-node apps/nest-kafka/src/main.ts kafka:produce"
+        }
+      },
+      "kafka-producer:dev:file": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "pnpm ts-node apps/nest-kafka/src/main.ts kafka:produce --file apps/nest-kafka/src/kafka/data/health-check.json"
+        }
       }
     }
   }
