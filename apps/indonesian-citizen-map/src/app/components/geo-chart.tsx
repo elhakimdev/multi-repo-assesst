@@ -3,21 +3,17 @@
 import * as echarts from 'echarts/core';
 
 import { GeoComponentOption, TitleComponent, TitleComponentOption, ToolboxComponent, ToolboxComponentOption, TooltipComponent, TooltipComponentOption, VisualMapComponent, VisualMapComponentOption } from 'echarts/components';
-import { HTMLAttributes, forwardRef, useEffect, useId, useRef } from 'react';
+import { HTMLAttributes, forwardRef, useEffect, useId, useRef, useState } from 'react';
 
-import { GeoComponent } from 'echarts/components'; // Required for geo-based charts
+import { GeoComponent } from 'echarts/components';
 import { MapChart } from 'echarts/charts';
 import { SVGRenderer } from 'echarts/renderers';
 
-// Ensure the map chart is imported
-type EchartConfigsOptions  = echarts.EChartsCoreOption & echarts.ComposeOption<
-  TooltipComponentOption
-  | GeoComponentOption
-  | ToolboxComponentOption
-  | TooltipComponentOption
-  | TitleComponentOption
-  | VisualMapComponentOption
+// Define supported options
+type EchartConfigsOptions = echarts.EChartsCoreOption & echarts.ComposeOption<
+  TooltipComponentOption | GeoComponentOption | ToolboxComponentOption | TitleComponentOption | VisualMapComponentOption
 >;
+
 export interface EchartConfigs {
   options: EchartConfigsOptions;
 }
@@ -26,88 +22,93 @@ export interface GeoChartProps {
   echartConfigs: EchartConfigs;
   title?: string;
   subTitle?: string;
-  styleProps: HTMLAttributes<HTMLDivElement>["style"];
+  styleProps?: HTMLAttributes<HTMLDivElement>["style"];
   geoJson?: {
     url?: string;
     name?: string;
-  } 
+  };
 }
 
 export interface GeoChartRefs {
   getInstance: () => echarts.ECharts | null;
 }
 
-export const GeoChart = forwardRef<GeoChartRefs, GeoChartProps>(({ echartConfigs, title, subTitle, styleProps, geoJson, ...rest }, ref) => {
-  const id = useId();
-  const chartRef = useRef<HTMLDivElement>(null);
-  const instanceRef = useRef<echarts.ECharts | null>(null);
-  const {url, name} = geoJson!;
-  let isMounted = false;
 
-  // Resize listener
-  const handleResize = () => {
-    if (instanceRef.current && isMounted && chartRef.current) {
-      instanceRef.current.resize();
-    }
-  };
+echarts.use([
+  SVGRenderer
+])
 
-  const initGeoJsonChart = async () => {
-    const response = await fetch(url!);
-    console.log(response);
-    if (!response.ok) throw new Error("Failed to load GeoJSON");
+echarts.use([
+  ToolboxComponent,
+  TooltipComponent,
+  VisualMapComponent,
+  TitleComponent
+])
 
-    const geoJson = await response.json();
-    echarts.registerMap(name!, geoJson); // Register map
-    echarts.use([
-      SVGRenderer
-    ])
+echarts.use([
+  MapChart,
+  GeoComponent
+])
 
-    echarts.use([
-      ToolboxComponent,
-      TooltipComponent,
-      VisualMapComponent,
-      TitleComponent
-    ])
 
-    echarts.use([
-      MapChart,
-      GeoComponent
-    ])
+export const GeoChart = forwardRef<GeoChartRefs, GeoChartProps>(
+  ({ echartConfigs, title, subTitle, styleProps, geoJson }, ref) => {
+    const id = useId();
+    const chartRef = useRef<HTMLDivElement>(null);
+    const instanceRef = useRef<echarts.ECharts | null>(null);
+    const [isClient, setIsClient] = useState(false); // Prevent SSR errors
+    const [isGeoJsonLoaded, setIsGeoJsonLoaded] = useState(false);
+
+    // Prevent SSR errors by ensuring execution happens only on the client side
+    useEffect(() => {
+      setIsClient(typeof window !== 'undefined');
+    }, []);
+
+    // Fetch and register GeoJSON map
+    useEffect(() => {
+      if (!geoJson?.url || !geoJson?.name || !isClient) return;
+
+      const loadGeoJson = async () => {
+        try {
+          const response = await fetch(geoJson?.url!);
+          if (!response.ok) throw new Error('Failed to load GeoJSON');
+          const geoData = await response.json();
+          echarts.registerMap(geoJson?.name!, geoData);
+          setIsGeoJsonLoaded(true);
+        } catch (error) {
+          console.error('Error loading GeoJSON:', error);
+        }
+      };
+
+      loadGeoJson();
+    }, [geoJson, isClient]);
+
+    // Initialize ECharts instance
+    useEffect(() => {
+      if (!chartRef.current || !isClient || !isGeoJsonLoaded) return;
+
+      instanceRef.current = echarts.init(chartRef.current, null, { renderer: 'svg' });
+      instanceRef.current.setOption(echartConfigs.options);
+
+      const handleResize = () => instanceRef.current?.resize();
+      window.addEventListener('resize', handleResize);
+
+      return () => {
+        window.removeEventListener('resize', handleResize);
+        instanceRef.current?.dispose();
+        instanceRef.current = null;
+      };
+    }, [isGeoJsonLoaded, isClient, echartConfigs]);
+
+    return isClient ? (
+      <div
+        id={'geochart_' + id}
+        ref={chartRef}
+        style={styleProps}
+        className="border border-gray-400 shadow-inner p-2 rounded-md"
+      />
+    ) : null;
   }
+);
 
-  useEffect(() => {
-
-    const initializeChart = async () => {
-      isMounted = true;
-
-      await initGeoJsonChart();
-
-      console.log(chartRef.current, isMounted);
-      
-      if(chartRef.current, isMounted) {
-        instanceRef.current = echarts.init(chartRef.current, null, {
-          renderer: "svg"
-        });
-        instanceRef.current.setOption({
-          ...echartConfigs.options
-        })
-
-        window.addEventListener("resize", handleResize);
-      }
-    };
-
-    initializeChart();
-
-    return () => {
-      isMounted = false;
-      window.removeEventListener("resize", handleResize);
-      instanceRef.current?.dispose();
-    };
-  }, [echartConfigs]);
-
-  return (
-      <div id={'geochart_' + id} ref={chartRef} style={styleProps} className='border border-gray-400 shadow-inner p-2 rounded-md' />
-  );
-});
-
-GeoChart.displayName = 'EchartGeoChartMaps'
+GeoChart.displayName = 'EchartGeoChartMaps';

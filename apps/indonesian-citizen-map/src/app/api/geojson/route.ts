@@ -6,8 +6,6 @@ export async function GET() {
   try {
     const filePath = path.join(process.cwd(), "public/indonesia-province.json");
     const fileContents = await fs.readFile(filePath, "utf8");
-
-    console.log("filePath", filePath);
     return new NextResponse(fileContents, {
       headers: {
         "Content-Type": "application/json",

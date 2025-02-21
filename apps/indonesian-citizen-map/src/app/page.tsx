@@ -1,8 +1,8 @@
 'use client';
 
 import { EchartConfigs, GeoChart, GeoChartRefs } from "./components/geo-chart";
-import React, { useEffect } from "react";
 
+import React from "react";
 import { provinceNameMap } from "./components/geo-json-normalized";
 
 export default function Index() {
@@ -59,9 +59,7 @@ export default function Index() {
     percentageValue: (((population.value * 1000) / totalPopulations) * 100),
     percentageValueUnit: 'percentile',
     percentageDisplayValue: (((population.value * 1000) / totalPopulations) * 100).toFixed(2).concat(" %")
-  }))
-  
-  console.log({populations, totalPopulations, enrichedPopulations})
+  }));
   
   const echartConfigs: EchartConfigs = {
     options: {
