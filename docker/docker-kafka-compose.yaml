@@ -62,13 +62,18 @@ services:
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_TOPICS: "${DEFAULT_KAFKA_TOPICS}"
-    # volumes:
-    #   - ./create-topic.sh:/usr/local/bin/create-topics.sh
-    # entrypoint: ["/bin/bash", "-c", "chmod +x /usr/local/bin/create-topics.sh && /usr/local/bin/create-topics.sh"]
+    volumes:
+      - ./bin/boot.sh:/opt/kafka/bin/boot.sh
     depends_on:
       - controller-1
       - controller-2
       - controller-3
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--list", "--bootstrap-server", "broker-1:19092"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
   broker-2:
     image: apache/kafka:latest
@@ -88,13 +93,18 @@ services:
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_TOPICS: "${DEFAULT_KAFKA_TOPICS}"
-    # volumes:
-    #   - ./create-topic.sh:/usr/local/bin/create-topics.sh
-    # entrypoint: ["/bin/bash", "-c", "chmod +x /usr/local/bin/create-topics.sh && /usr/local/bin/create-topics.sh"]
+    volumes:
+      - ./bin/boot.sh:/opt/kafka/bin/boot.sh
     depends_on:
       - controller-1
       - controller-2
       - controller-3
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--list", "--bootstrap-server", "broker-2:19092"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
   broker-3:
     image: apache/kafka:latest
@@ -114,10 +124,28 @@ services:
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_TOPICS: "${DEFAULT_KAFKA_TOPICS}"
-    # volumes:
-    #   - ./create-topic.sh:/usr/local/bin/create-topics.sh
-    # entrypoint: ["/bin/bash", "-c", "chmod +x /usr/local/bin/create-topics.sh && /usr/local/bin/create-topics.sh"]
+    volumes:
+      - ./bin/boot.sh:/opt/kafka/bin/boot.sh
     depends_on:
       - controller-1
       - controller-2
       - controller-3
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--list", "--bootstrap-server", "broker-3:19092"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8081:8080
+    networks:
+      - kafka-network
+    environment:
+      DYNAMIC_CONFIG_ENABLED: true
+      KAFKA_CLUSTERS_0_NAME: default-kafka-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker-1:19092,broker-2:19092,broker-3:19092
+
+
