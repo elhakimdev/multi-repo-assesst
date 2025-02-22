@@ -70,27 +70,27 @@ The `docker/docker-kafka-compose.yaml` file defines the following:
 once the start up done, the admin ui for managing kafka service can be accessed on `http://localhost:8081`
 its also configure the default kluster, bind into to `broker-1` `broker-2` `broker-3`
 
-![alt text](image-4.png)
+![alt text](./images/image-4.png)
 
 click to list `defaulty-kafka-cluster` to configure kluster if needed
 
-![alt text](image-5.png)
+![alt text](./images/image-5.png)
 
 To create topics called `nest-kafka-topic` go to `Topics` side menu and click add a topic
 
-![alt text](image-6.png)
+![alt text](./images/image-6.png)
 
 create new topic `nest-kafka-topic` 
 
-![alt text](image-7.png)
+![alt text](./images/image-7.png)
 
 Once done it will list the topic and partition , your topic are reaady to be used
 
-![alt text](image-8.png)
+![alt text](./images/image-8.png)
 
 Go to `Consumer`  menu to list all available connected consumers (for mmonitoring message)
 
-![alt text](image-9.png)
+![alt text](./images/image-9.png)
 ## Running Producer & Consumer 
 
 Before running consumer, install all dependency using `npm` or `pnpm` or `yarn`, its also installed dev dependency Nx Library whic used for managing monorepo for multiple projects at one repository and for running producer or consumer through terminal
@@ -136,7 +136,7 @@ yarn nx run kafka-nest:kafka-consumer:dev
 ```
 
 if prompted to enter the topic name : `nest-kafka-topic`, then press enter 
-![alt text](image-10.png)
+![alt text](./images/image-10.png)
 
 after running consumer, youre ready to produce any message too the broker and monitor the message through `kafka-ui` at `localhost:8081`
 
@@ -156,37 +156,37 @@ using `yarn`
 yarn nx run kafka-nest:kafka-producer:dev:interactive
 ```
 
-![alt text](image-11.png)
+![alt text](./images/image-11.png)
 
 if prompted to enter the topic name : `nest-kafka-topic`, then press enter 
 
-![alt text](image-12.png)
+![alt text](./images/image-12.png)
 
 after entering topics, it wil prompt to enter any message, try it to entering any message then enter to send 
 
-![alt text](image-13.png)
+![alt text](./images/image-13.png)
 
-![alt text](image-14.png)
+![alt text](./images/image-14.png)
 
 A succes wil display into terminal 
 
-![alt text](image-15.png)
+![alt text](./images/image-15.png)
 
 check to consumer to see the message 
-![alt text](image-16.png)
+![alt text](./images/image-16.png)
 
 try send another message 
-![alt text](image-17.png)
-![alt text](image-18.png)
+![alt text](./images/image-17.png)
+![alt text](./images/image-18.png)
 
 check again through the consumer 
-![alt text](image-19.png)
+![alt text](./images/image-19.png)
 
 
 verify message are broadcast to kafka in kafka-ui admin panel
-![alt text](image-20.png)![alt text](image-21.png)![alt text](image-22.png)
+![alt text](./images/image-20.png)![alt text](./images/image-21.png)![alt text](./images/image-22.png)
 
-![alt text](image-23.png)![alt text](image-24.png)![alt text](image-25.png)![alt text](image-26.png)
+![alt text](./images/image-23.png)![alt text](./images/image-24.png)![alt text](./images/image-25.png)![alt text](./images/image-26.png)
 
 Press `ctrl+c` to close producer and consumer
 ## Notes
@@ -197,6 +197,7 @@ Press `ctrl+c` to close producer and consumer
   ```sh
   chmod +x scripts/*.sh
   ```
+- If the error raised during setup or producer/consumer runtime, try check the logs of kafka service, all logs placed inside `./logs` folder
 
 ## License
 
