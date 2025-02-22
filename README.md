@@ -189,6 +189,36 @@ verify message are broadcast to kafka in kafka-ui admin panel
 ![alt text](./images/image-23.png)![alt text](./images/image-24.png)![alt text](./images/image-25.png)![alt text](./images/image-26.png)
 
 Press `ctrl+c` to close producer and consumer
+
+## Running Next Js Project (Indonesia Population)
+
+To run next js indonesia population charts simply call :
+
+```sh
+pnpm exec nx run kafka-nest:kafka-producer:dev:interactive
+```
+
+using `npm` / `npx`
+```sh
+npx nx run kafka-nest:kafka-producer:dev:interactive
+
+```
+
+using `yarn`
+```sh
+yarn nx run kafka-nest:kafka-producer:dev:interactive
+```
+
+Then navigate to 
+```   
+- Local:        http://localhost:3000
+- Network:      http://192.168.51.100:3000
+```
+The chart will show
+![alt text](./images/image.png)
+
+![alt text](image.png)
+
 ## Notes
 
 - Brokers are accessible externally via `localhost:29092`, `localhost:39092`, and `localhost:49092`.
